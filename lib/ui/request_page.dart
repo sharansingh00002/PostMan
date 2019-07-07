@@ -3,7 +3,6 @@ import 'package:postman/Repo/repository.dart';
 import 'package:postman/database/sqlDB.dart';
 import 'package:postman/model/DatabaseModels.dart';
 import 'package:postman/resources/colors.dart';
-import 'package:postman/resources/globals.dart';
 import 'package:postman/resources/strings.dart';
 import 'package:postman/ui/home_page.dart';
 import 'package:postman/widgets/bold_text_widget.dart';
