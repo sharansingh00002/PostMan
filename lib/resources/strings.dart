@@ -1,6 +1,6 @@
 //Home Page
 
-String titleHome = 'HOME';
+String titleRequestPage = 'REQUEST';
 String msgSend = 'SEND';
 
 //Request Page
@@ -14,5 +14,7 @@ String msgValuesAbsentError = 'Please enter both values properly';
 String msgDeleteHeader = 'Delete Header';
 String msgDeleteHeaderDescription =
     'Are you sure you want to delete this header';
+String msgDeleteApi = 'Delete Api';
+String msgDeleteApiDescription = 'Are you sure you want to delete this api?';
 String actionNo = 'NO';
 String actionYes = 'YES';

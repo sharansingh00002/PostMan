@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:postman/model/responseModel.dart';
 
@@ -17,9 +19,10 @@ class ApiProvider {
           url,
           headers: headers,
         );
-        responseStatusCode = response.statusCode.toString();
-        body = response.body;
-        print(responseStatusCode + '   $body');
+
+        JsonEncoder encoder = JsonEncoder.withIndent('  ');
+        body = encoder.convert(json.decode(response.body));
+
         return ResponseModel(
           responseCode: responseStatusCode,
           body: body,

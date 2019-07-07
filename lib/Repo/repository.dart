@@ -1,7 +1,6 @@
-import 'package:postman/api_calls/api_provider.dart';
+import 'package:postman/api_provider/api_provider.dart';
 import 'package:postman/model/responseModel.dart';
 import 'package:postman/resources/values.dart';
-import 'package:postman/ui/home_page.dart';
 
 class Repository {
   ApiProvider _apiProvider = ApiProvider();
@@ -15,7 +14,6 @@ class Repository {
       url: url,
       headers: headers,
     );
-    print('recvd ${responseModel.responseCode}');
     mainResponseModel = responseModel;
   }
 }
