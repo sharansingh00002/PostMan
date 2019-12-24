@@ -18,8 +18,8 @@ Future<void> showErrorDialog({
   if (AlertAnimation.isErrorPresent == false) {
     AlertAnimation.isErrorPresent = true;
     final OverlayState overlayState = Overlay.of(context);
-    final OverlayEntry overlayEntry = OverlayEntry(builder: (context) {
-      return AlertAnimation(
+    final OverlayEntry overlayEntry = OverlayEntry(
+      builder: (context) => AlertAnimation(
         ctx: context,
         child: child,
         offsetFromTop: offsetFromTop,
@@ -29,9 +29,9 @@ Future<void> showErrorDialog({
         timeStay: timeStay,
         timeAnimate: timeAnimate,
         cardCornerRadius: cardCornerRadius,
-        bgColor: bgColor ?? Theme.of(context).accentColor,
-      );
-    });
+        bgColor: bgColor ?? Colors.white,
+      ),
+    );
     overlayState.insert(overlayEntry);
     await Future<dynamic>.delayed(
         Duration(milliseconds: timeStay + timeAnimate + 500));
@@ -93,7 +93,7 @@ class AlertAnimationState extends State<AlertAnimation>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     if (_controller.status == AnimationStatus.completed) {
       _controller.reset();
       _controller.forward();
@@ -102,38 +102,35 @@ class AlertAnimationState extends State<AlertAnimation>
     final double width = MediaQuery.of(widget.ctx).size.width;
     return AnimatedBuilder(
       animation: _controller,
-      builder: (BuildContext context, Widget child) {
-        return Transform(
-          transform:
-              Matrix4.translationValues(0, _animation.value * height, 0.0),
-          child: Stack(
-            children: <Widget>[
-              Positioned(
-                top: height / 2 * widget.offsetFromTop,
-                left: (width - (widget.maxWidth)) / 2,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxHeight: widget.maxHeight,
-                      maxWidth: widget.maxWidth,
-                      minWidth: widget.maxWidth),
-                  child: Card(
-                    color: widget.bgColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(widget.cardCornerRadius)),
-                    child: Container(
-                      padding: widget.padding,
-                      child: SingleChildScrollView(
-                        child: Center(child: widget.child),
-                      ),
+      builder: (BuildContext context, Widget child) => Transform(
+        transform: Matrix4.translationValues(0, _animation.value * height, 0.0),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              top: height / 2 * widget.offsetFromTop,
+              left: (width - (widget.maxWidth)) / 2,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                    maxHeight: widget.maxHeight,
+                    maxWidth: widget.maxWidth,
+                    minWidth: widget.maxWidth),
+                child: Card(
+                  color: Color(0xFFFFC100),
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(widget.cardCornerRadius)),
+                  child: Container(
+                    padding: widget.padding,
+                    child: SingleChildScrollView(
+                      child: Center(child: widget.child),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 

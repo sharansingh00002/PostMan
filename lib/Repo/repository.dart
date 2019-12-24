@@ -1,6 +1,6 @@
 import 'package:postman/api_provider/api_provider.dart';
 import 'package:postman/model/responseModel.dart';
-import 'package:postman/resources/values.dart';
+import 'package:postman/resources/global.dart';
 
 class Repository {
   ApiProvider _apiProvider = ApiProvider();
@@ -14,6 +14,7 @@ class Repository {
       url: url,
       headers: headers,
     );
-    mainResponseModel = responseModel;
+//    print('responseis ${responseModel.s}');
+    globalResponseStream.sink.add(responseModel);
   }
 }

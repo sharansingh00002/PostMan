@@ -21,9 +21,11 @@ class ApiProvider {
             headers: headers,
           );
           responseStatusCode = response.statusCode.toString();
-          JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          body = encoder.convert(json.decode(response.body));
-        } catch (e) {}
+          var object = json.decode(response.body);
+          body = JsonEncoder.withIndent('  ').convert(object);
+        } catch (e) {
+          body = response.body;
+        }
         return ResponseModel(
           responseCode: responseStatusCode,
           body: body,
@@ -36,9 +38,11 @@ class ApiProvider {
             headers: headers,
           );
           responseStatusCode = response.statusCode.toString();
-          JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          body = encoder.convert(json.decode(response.body));
-        } catch (e) {}
+          var object = json.decode(response.body);
+          body = JsonEncoder.withIndent('  ').convert(object);
+        } catch (e) {
+          body = response.body;
+        }
         return ResponseModel(
           responseCode: responseStatusCode,
           body: body,
@@ -51,9 +55,11 @@ class ApiProvider {
             headers: headers,
           );
           responseStatusCode = response.statusCode.toString();
-          JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          body = encoder.convert(json.decode(response.body));
-        } catch (e) {}
+          var object = json.decode(response.body);
+          body = JsonEncoder.withIndent('  ').convert(object);
+        } catch (e) {
+          body = response.body;
+        }
         return ResponseModel(
           responseCode: responseStatusCode,
           body: body,
@@ -66,9 +72,11 @@ class ApiProvider {
             headers: headers,
           );
           responseStatusCode = response.statusCode.toString();
-          JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          body = encoder.convert(json.decode(response.body));
-        } catch (e) {}
+          var object = json.decode(response.body);
+          body = JsonEncoder.withIndent('  ').convert(object);
+        } catch (e) {
+          body = response.body;
+        }
         return ResponseModel(
           responseCode: responseStatusCode,
           body: body,
@@ -81,9 +89,11 @@ class ApiProvider {
             headers: headers,
           );
           responseStatusCode = response.statusCode.toString();
-          JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          body = encoder.convert(json.decode(response.body));
-        } catch (e) {}
+          var object = json.decode(response.body);
+          body = JsonEncoder.withIndent('  ').convert(object);
+        } catch (e) {
+          body = response.body;
+        }
         return ResponseModel(
           responseCode: responseStatusCode,
           body: body,
@@ -96,9 +106,11 @@ class ApiProvider {
             headers: headers,
           );
           responseStatusCode = response.statusCode.toString();
-          JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          body = encoder.convert(json.decode(response.body));
-        } catch (e) {}
+          var object = json.decode(response.body);
+          body = JsonEncoder.withIndent('  ').convert(object);
+        } catch (e) {
+          body = response.body;
+        }
         return ResponseModel(
           responseCode: responseStatusCode,
           body: body,

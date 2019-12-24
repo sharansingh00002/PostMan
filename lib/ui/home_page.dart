@@ -24,12 +24,14 @@ class PostPage extends StatefulWidget {
 
 class PostPageState extends State<PostPage> {
   int page = 0;
-  PostPageState pageState;
   final PageController controller = PageController();
   @override
   void initState() {
-    pageState = this;
     super.initState();
+  }
+
+  jumpToPage(int index) {
+    controller.jumpToPage(index);
   }
 
   goBack() {
@@ -54,7 +56,7 @@ class PostPageState extends State<PostPage> {
           switch (index) {
             case 0:
               return RequestsPage(
-                pageState,
+                jumpToPage,
               );
               break;
             case 1:

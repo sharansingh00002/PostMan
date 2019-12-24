@@ -4,17 +4,15 @@ import 'package:postman/database/sqlDB.dart';
 import 'package:postman/model/DatabaseModels.dart';
 import 'package:postman/resources/colors.dart';
 import 'package:postman/resources/strings.dart';
-import 'package:postman/ui/home_page.dart';
 import 'package:postman/widgets/bold_text_widget.dart';
 import 'package:postman/widgets/custom_dialog.dart';
 import 'package:postman/widgets/modal_bottom_sheet.dart';
 import 'package:postman/widgets/show_error_dialog.dart';
+import 'package:rxdart/rxdart.dart';
 
 class RequestsPage extends StatefulWidget {
-  final PostPageState pageState;
-  RequestsPage(
-    this.pageState,
-  );
+  final jumpToPage;
+  RequestsPage(this.jumpToPage);
 
   @override
   _RequestsPageState createState() => _RequestsPageState();
@@ -24,6 +22,7 @@ class _RequestsPageState extends State<RequestsPage> {
   final TextEditingController _urlController = TextEditingController();
   final TextEditingController _headerTypeController = TextEditingController();
   final TextEditingController _headerValueController = TextEditingController();
+  final headerValueStream = BehaviorSubject<String>();
 
   List<HeaderValuesModel> headerValuesList = List();
   Map<String, String> headerValuesMap = Map();
@@ -35,9 +34,21 @@ class _RequestsPageState extends State<RequestsPage> {
   final SqliteDB _sqliteDB = SqliteDB();
 
   @override
+  void initState() {
+    headerValueStream.sink.add(mainHeadersList[0]);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    headerValueStream.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+//      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text(
           titleRequestPage,
@@ -52,7 +63,7 @@ class _RequestsPageState extends State<RequestsPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              if (_urlController.text.isNotEmpty) {
+              if (_urlController.text.trim().isNotEmpty) {
                 _sqliteDB
                     .insertIntoDB(
                   api: sslType + _urlController.text,
@@ -68,6 +79,19 @@ class _RequestsPageState extends State<RequestsPage> {
                     backgroundColor: Colors.white,
                   ));
                 });
+              } else {
+                showErrorDialog(
+                  child: Text(
+                    'Url field is empty',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  context: context,
+                  bgColor: accentColor,
+                  timeStay: 1500,
+                );
               }
             },
           ),
@@ -98,10 +122,11 @@ class _RequestsPageState extends State<RequestsPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                    BoldText(
-                                      text: 'API List',
-                                      positionsToBold: [0],
-                                      fontSize: 18,
+                                    Text(
+                                      'API List',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     Container(
                                       width: MediaQuery.of(context).size.width *
@@ -333,10 +358,9 @@ class _RequestsPageState extends State<RequestsPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
           children: <Widget>[
             SingleChildScrollView(
               child: Padding(
@@ -402,6 +426,7 @@ class _RequestsPageState extends State<RequestsPage> {
                           ),
                           width: MediaQuery.of(context).size.width * 0.50,
                           child: TextFormField(
+                            keyboardType: TextInputType.url,
                             cursorColor: accentColor,
                             controller: _urlController,
                           ),
@@ -420,61 +445,87 @@ class _RequestsPageState extends State<RequestsPage> {
                             _headerValueController.clear();
                             _headerTypeController.clear();
                             showModalBottomSheetApp<void>(
-                              dialogHeightPercentage: 0.4,
+                              dialogHeightPercentage: 0.5,
                               context: context,
                               builder: (BuildContext _) {
                                 return Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        child: BoldText(
-                                          text: msgAddHeader,
-                                          positionsToBold: [1],
-                                          color: Colors.black,
-                                          fontSize: 22.0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 32.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8.0),
+                                          child: BoldText(
+                                            text: msgAddHeader,
+                                            positionsToBold: [1],
+                                            color: Colors.black,
+                                            fontSize: 22.0,
+                                          ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16.0,
-                                          horizontal: 10.0,
-                                        ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            BoldText(
-                                              text: msgType,
-                                              positionsToBold: [0],
-                                              fontSize: 18.0,
-                                            ),
-                                            Container(
-                                              padding: const EdgeInsets.only(
-                                                left: 16.0,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16.0,
+                                          ),
+                                          child: Row(
+                                            children: <Widget>[
+                                              BoldText(
+                                                text: msgType,
+                                                positionsToBold: [0],
+                                                fontSize: 18.0,
                                               ),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              child: TextFormField(
-                                                maxLines: 1,
-                                                cursorColor: accentColor,
-                                                controller:
-                                                    _headerTypeController,
+                                              Expanded(
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 16.0,
+                                                  ),
+                                                  child: StreamBuilder<String>(
+                                                      stream: headerValueStream
+                                                          .stream,
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        return DropdownButton<
+                                                            String>(
+                                                          value: (snapshot
+                                                                  .data ??
+                                                              mainHeadersList[
+                                                                  0]),
+                                                          onChanged:
+                                                              (String value) {
+                                                            headerValueStream
+                                                                .sink
+                                                                .add(value);
+                                                          },
+                                                          items: mainHeadersList
+                                                              .map<
+                                                                  DropdownMenuItem<
+                                                                      String>>(
+                                                            (String value) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: value,
+                                                                child:
+                                                                    Text(value),
+                                                              );
+                                                            },
+                                                          ).toList(),
+                                                        );
+                                                      }),
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16.0,
-                                          horizontal: 10.0,
-                                        ),
-                                        child: FittedBox(
-                                          fit: BoxFit.scaleDown,
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16.0,
+                                          ),
                                           child: Row(
                                             children: <Widget>[
                                               BoldText(
@@ -482,84 +533,97 @@ class _RequestsPageState extends State<RequestsPage> {
                                                 positionsToBold: [0],
                                                 fontSize: 18.0,
                                               ),
-                                              Container(
-                                                padding: const EdgeInsets.only(
-                                                  left: 16.0,
-                                                ),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.8,
-                                                child: TextFormField(
-                                                  maxLines: 1,
-                                                  cursorColor: accentColor,
-                                                  controller:
-                                                      _headerValueController,
+                                              Expanded(
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    left: 16.0,
+                                                  ),
+                                                  child: TextFormField(
+                                                    maxLines: 1,
+                                                    cursorColor: accentColor,
+                                                    controller:
+                                                        _headerValueController,
+                                                  ),
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 16.0,
-                                        ),
-                                        child: RaisedButton(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 32.0,
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 16.0,
                                           ),
-                                          color: accentColor,
-                                          onPressed: () {
-                                            if (_headerTypeController
-                                                    .text.isNotEmpty &&
-                                                _headerValueController
-                                                    .text.isNotEmpty) {
-                                              headerValuesList.removeWhere(
-                                                (HeaderValuesModel val) =>
-                                                    val.key ==
-                                                    _headerTypeController.text,
-                                              );
-                                              headerValuesList
-                                                  .add(HeaderValuesModel(
-                                                _headerTypeController.text,
-                                                _headerValueController.text,
-                                              ));
-                                              headerValuesMap[
-                                                      _headerTypeController
-                                                          .text] =
-                                                  _headerValueController.text;
-                                              setState(() {});
-                                              Navigator.pop(context);
-                                            } else {
-                                              showErrorDialog(
-                                                child: Text(
-                                                  msgValuesAbsentError,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 18.0,
+                                          child: StreamBuilder<String>(
+                                              stream: headerValueStream.stream,
+                                              builder: (context, snapshot) {
+                                                return RaisedButton(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 32.0,
                                                   ),
-                                                ),
-                                                context: context,
-                                                bgColor: accentColor,
-                                                timeStay: 800,
-                                              );
-                                            }
-                                          },
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4.0),
-                                          ),
-                                          child: Text(
-                                            msgAddHeader.split(' ')[0],
-                                            style: TextStyle(
-                                              fontSize: 18.0,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                                                  color: accentColor,
+                                                  onPressed: () {
+                                                    if (_headerValueController
+                                                        .text.isNotEmpty) {
+                                                      headerValuesList
+                                                          .removeWhere(
+                                                        (HeaderValuesModel
+                                                                val) =>
+                                                            val.key ==
+                                                            (snapshot.data ??
+                                                                mainHeadersList[
+                                                                    0]),
+                                                      );
+                                                      headerValuesList.add(
+                                                          HeaderValuesModel(
+                                                        (snapshot.data ??
+                                                            mainHeadersList[0]),
+                                                        _headerValueController
+                                                            .text,
+                                                      ));
+                                                      headerValuesMap[(snapshot
+                                                                  .data ??
+                                                              mainHeadersList[
+                                                                  0])] =
+                                                          _headerValueController
+                                                              .text;
+
+                                                      setState(() {
+                                                        Navigator.pop(context);
+                                                      });
+                                                    } else {
+                                                      showErrorDialog(
+                                                        child: Text(
+                                                          msgValuesAbsentError,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18.0,
+                                                          ),
+                                                        ),
+                                                        context: context,
+                                                        bgColor: accentColor,
+                                                        timeStay: 1500,
+                                                      );
+                                                    }
+                                                  },
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4.0),
+                                                  ),
+                                                  child: Text(
+                                                    msgAddHeader.split(' ')[0],
+                                                    style: TextStyle(
+                                                      fontSize: 18.0,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
@@ -602,30 +666,49 @@ class _RequestsPageState extends State<RequestsPage> {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                if (_urlController.toString().isNotEmpty)
-                  repository
-                      .makeRequest(
-                    requestType: requestTypeDropDownValue,
-                    url: sslType + _urlController.text,
-                    headers: headerValuesMap,
-                  )
-                      .then(
-                    (_) {
-                      widget.pageState.controller.jumpToPage(1);
-                    },
-                  );
-              },
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.1,
-                color: accentColor,
-                child: Center(
-                  child: Text(
-                    msgSend,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  if (_urlController.text.isNotEmpty) {
+                    repository
+                        .makeRequest(
+                      requestType: requestTypeDropDownValue,
+                      url: sslType + _urlController.text,
+                      headers: headerValuesMap,
+                    )
+                        .then(
+                      (_) {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        widget.jumpToPage(1);
+                      },
+                    );
+                  } else {
+                    showErrorDialog(
+                      context: context,
+                      timeStay: 2000,
+                      bgColor: Colors.deepOrangeAccent,
+                      child: Text(
+                        'Url field is empty',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+                    );
+                  }
+                },
+                child: Container(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  color: accentColor,
+                  child: Center(
+                    child: Text(
+                      msgSend,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -680,62 +763,115 @@ class _RequestsPageState extends State<RequestsPage> {
           );
         },
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      children: <Widget>[
-                        BoldText(
-                          text: msgType,
-                          positionsToBold: [0],
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          children: <Widget>[
+                            BoldText(
+                              text: msgType,
+                              positionsToBold: [0],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                              ),
+                              child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  child: Text(headerValues.key)),
+                            )
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                          ),
-                          child: Container(
-                              width: MediaQuery.of(context).size.width * 0.6,
-                              child: Text(headerValues.key)),
-                        )
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        BoldText(
-                          text: msgValue,
-                          positionsToBold: [0],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            BoldText(
+                              text: msgValue,
+                              positionsToBold: [0],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8.0,
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: Text(headerValues.value),
+                              ),
+                            )
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8.0,
-                          ),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            child: Text(headerValues.value),
-                          ),
-                        )
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CustomDialog(
+                          title: msgDeleteHeader,
+                          description: msgDeleteHeaderDescription,
+                          buttons: <Widget>[
+                            FlatButton(
+                              child: Text(
+                                actionNo.toUpperCase(),
+                                style: TextStyle(color: unselectedColor),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            FlatButton(
+                              child: Text(
+                                actionYes.toUpperCase(),
+                                style: TextStyle(color: accentColor),
+                              ),
+                              onPressed: () {
+                                setState(
+                                  () {
+                                    headerValuesList.removeWhere(
+                                        (val) => val == headerValues);
+                                    headerValuesMap.remove(headerValues.key);
+                                  },
+                                );
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              )
+            ],
           ),
         ),
       ),
