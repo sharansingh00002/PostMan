@@ -114,7 +114,7 @@ class _RequestsPageState extends State<RequestsPage> {
                               child: Container(
                                 height:
                                     MediaQuery.of(context).size.height * 0.75,
-                                width: MediaQuery.of(context).size.width * 0.75,
+                                width: MediaQuery.of(context).size.width * 0.9,
                                 padding: const EdgeInsets.only(
                                   top: 32.0,
                                   bottom: 32.0,
@@ -129,12 +129,14 @@ class _RequestsPageState extends State<RequestsPage> {
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.60,
+//                                      width: MediaQuery.of(context).size.width *
+//                                          0.60,
                                       height:
                                           MediaQuery.of(context).size.height *
                                               0.6,
                                       child: ListView.builder(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0, vertical: 8.0),
                                         scrollDirection: Axis.horizontal,
                                         itemCount: data?.apis?.length ?? 0,
                                         itemBuilder: (context, index) {
@@ -146,7 +148,7 @@ class _RequestsPageState extends State<RequestsPage> {
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.5,
+                                                0.65,
                                             padding: const EdgeInsets.symmetric(
                                               vertical: 16.0,
                                             ),
@@ -681,8 +683,23 @@ class _RequestsPageState extends State<RequestsPage> {
                     )
                         .then(
                       (_) {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                        widget.jumpToPage(1);
+                        if (_ != null) {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          widget.jumpToPage(1);
+                        } else {
+                          showErrorDialog(
+                            child: Text(
+                              'Url is not correct',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                            context: context,
+                            bgColor: accentColor,
+                            timeStay: 1500,
+                          );
+                        }
                       },
                     );
                   } else {

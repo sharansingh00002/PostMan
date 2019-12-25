@@ -4,7 +4,7 @@ import 'package:postman/resources/global.dart';
 
 class Repository {
   ApiProvider _apiProvider = ApiProvider();
-  Future<void> makeRequest({
+  Future<bool> makeRequest({
     String requestType,
     String url,
     Map<String, String> headers,
@@ -14,7 +14,14 @@ class Repository {
       url: url,
       headers: headers,
     );
+
+    if (responseModel != null) {
 //    print('responseis ${responseModel.s}');
-    globalResponseStream.sink.add(responseModel);
+
+      globalResponseStream.sink.add(responseModel);
+      return true;
+    } else {
+      return null;
+    }
   }
 }

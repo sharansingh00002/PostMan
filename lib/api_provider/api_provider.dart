@@ -13,6 +13,7 @@ class ApiProvider {
     String url,
     Map<String, String> headers,
   }) async {
+    print('urlis $url');
     switch (requestType) {
       case 'GET':
         try {
@@ -20,11 +21,16 @@ class ApiProvider {
             url,
             headers: headers,
           );
-          responseStatusCode = response.statusCode.toString();
-          var object = json.decode(response.body);
-          body = JsonEncoder.withIndent('  ').convert(object);
+          try {
+            responseStatusCode = response.statusCode.toString();
+            var object = json.decode(response.body);
+            body = JsonEncoder.withIndent('  ').convert(object);
+          } catch (e) {
+            responseStatusCode = response.statusCode.toString();
+            body = response.body;
+          }
         } catch (e) {
-          body = response.body;
+          return null;
         }
         return ResponseModel(
           responseCode: responseStatusCode,
@@ -33,15 +39,20 @@ class ApiProvider {
         break;
       case 'POST':
         try {
-          client.post(
+          response = await client.post(
             url,
             headers: headers,
           );
-          responseStatusCode = response.statusCode.toString();
-          var object = json.decode(response.body);
-          body = JsonEncoder.withIndent('  ').convert(object);
+          try {
+            responseStatusCode = response.statusCode.toString();
+            var object = json.decode(response.body);
+            body = JsonEncoder.withIndent('  ').convert(object);
+          } catch (e) {
+            responseStatusCode = response.statusCode.toString();
+            body = response.body;
+          }
         } catch (e) {
-          body = response.body;
+          return null;
         }
         return ResponseModel(
           responseCode: responseStatusCode,
@@ -50,15 +61,20 @@ class ApiProvider {
         break;
       case 'DELETE':
         try {
-          client.delete(
+          response = await client.delete(
             url,
             headers: headers,
           );
-          responseStatusCode = response.statusCode.toString();
-          var object = json.decode(response.body);
-          body = JsonEncoder.withIndent('  ').convert(object);
+          try {
+            responseStatusCode = response.statusCode.toString();
+            var object = json.decode(response.body);
+            body = JsonEncoder.withIndent('  ').convert(object);
+          } catch (e) {
+            responseStatusCode = response.statusCode.toString();
+            body = response.body;
+          }
         } catch (e) {
-          body = response.body;
+          return null;
         }
         return ResponseModel(
           responseCode: responseStatusCode,
@@ -67,15 +83,20 @@ class ApiProvider {
         break;
       case 'PATCH':
         try {
-          client.patch(
+          response = await client.patch(
             url,
             headers: headers,
           );
-          responseStatusCode = response.statusCode.toString();
-          var object = json.decode(response.body);
-          body = JsonEncoder.withIndent('  ').convert(object);
+          try {
+            responseStatusCode = response.statusCode.toString();
+            var object = json.decode(response.body);
+            body = JsonEncoder.withIndent('  ').convert(object);
+          } catch (e) {
+            responseStatusCode = response.statusCode.toString();
+            body = response.body;
+          }
         } catch (e) {
-          body = response.body;
+          return null;
         }
         return ResponseModel(
           responseCode: responseStatusCode,
@@ -84,32 +105,20 @@ class ApiProvider {
         break;
       case 'PUT':
         try {
-          client.put(
+          response = await client.put(
             url,
             headers: headers,
           );
-          responseStatusCode = response.statusCode.toString();
-          var object = json.decode(response.body);
-          body = JsonEncoder.withIndent('  ').convert(object);
+          try {
+            responseStatusCode = response.statusCode.toString();
+            var object = json.decode(response.body);
+            body = JsonEncoder.withIndent('  ').convert(object);
+          } catch (e) {
+            responseStatusCode = response.statusCode.toString();
+            body = response.body;
+          }
         } catch (e) {
-          body = response.body;
-        }
-        return ResponseModel(
-          responseCode: responseStatusCode,
-          body: body,
-        );
-        break;
-      case 'READ':
-        try {
-          client.read(
-            url,
-            headers: headers,
-          );
-          responseStatusCode = response.statusCode.toString();
-          var object = json.decode(response.body);
-          body = JsonEncoder.withIndent('  ').convert(object);
-        } catch (e) {
-          body = response.body;
+          return null;
         }
         return ResponseModel(
           responseCode: responseStatusCode,
